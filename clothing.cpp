@@ -1,6 +1,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <set>
 #include "util.h"
 #include "clothing.h"
 
@@ -27,6 +28,8 @@ Clothing::Clothing(const std::string category, const std::string name, double pr
 
 }
 
+Clothing::~Clothing() {}
+
 set<string> Clothing::keywords() const{
     set<string> nameWord = parseStringToWords(name_);
     set<string> brandWord = parseStringToWords(brand_);
@@ -39,7 +42,7 @@ set<string> Clothing::keywords() const{
 string Clothing::displayString() const{
     stringstream ss;
     ss << name_ << endl;
-    ss << "Size: " << size_ << "Brand: " << brand_ << endl;
+    ss << "Size: " << size_ << " Brand: " << brand_ << endl;
     ss <<  price_ << " " << qty_ << " left." << endl;
 
     return ss.str();

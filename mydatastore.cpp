@@ -15,15 +15,21 @@ using namespace std;
 MyDataStore::~MyDataStore()
 {
     // products & users
-    for (size_t i = 0; i < products_.size(); i++)
-    {
-        delete products_[i];
-    }
 
-    for (size_t i = 0; i < users_.size(); i++)
-    {
-        delete users_[i];
-    }
+    for (std::vector<Product*>::iterator it = products_.begin(); it != products_.end(); ++it) {
+    delete *it;
+  }
+  for (std::vector<User*>::iterator it = users_.begin(); it != users_.end(); ++it) {
+    delete *it;
+  }
+
+    // while(!products_.empty()){
+    //   delete products_.front();
+    // }
+
+    // while(!users_.empty()){
+    //   delete products_.front();
+    // }
 }
 
 void MyDataStore::addProduct(Product *p)
@@ -99,18 +105,20 @@ void MyDataStore::dump(std::ostream& ofile){
     // std::vector<User*> users_;
 
     //products
-    ofile << "Products:" << endl;
+    ofile << "<products>" << endl;
     vector<Product*>::iterator pIt;
     for (pIt = products_.begin(); pIt != products_.end(); ++pIt){
         (*pIt)->dump(ofile);
     }
+    ofile<<"</products>" <<endl;
 
     //users
-    ofile << "Users:" << endl;
+    ofile << "<users>" << endl;
     vector<User*>::iterator uIt;
     for (uIt = users_.begin(); uIt != users_.end(); ++uIt){
         (*uIt)->dump(ofile);
     }
+    ofile<< "</users>" << endl;
 
 }
 
@@ -133,7 +141,9 @@ void MyDataStore:: viewcart(std::string username){
 
     int num = 1;
     for(cIt = cart.begin(); cIt != cart.end(); ++cIt){
-        cout << "Item number " << num << ": " << (*cIt)->displayString() << endl;
+        cout << "Item " << num << endl;
+        cout << (*cIt)->displayString() << endl;
+        num++;
     }
 
 }

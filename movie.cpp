@@ -1,6 +1,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <set>
 #include "util.h"
 #include "movie.h"
 
@@ -24,6 +25,8 @@ Movie::Movie(const std::string category, const std::string name, double price, i
 
 }
 
+Movie::~Movie() {}
+
 set<string> Movie::keywords() const{
     set<string> keyWords = parseStringToWords(name_);
     string g = convToLower(genre_);
@@ -35,8 +38,8 @@ set<string> Movie::keywords() const{
 string Movie::displayString() const{
     stringstream ss;
     ss << name_ << endl;
-    ss << "Genre: " << genre_ << "Rating: " << rating_ << endl;
-    ss << price_ << qty_ << " left." << endl;
+    ss << "Genre: " << genre_ << " Rating: " << rating_ << endl;
+    ss << price_ << " " << qty_ << " left." << endl;
     
     return ss.str();
 }

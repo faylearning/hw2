@@ -1,6 +1,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <set>
 #include "util.h"
 #include "book.h"
 
@@ -23,10 +24,11 @@ using namespace std;
 // Carrano and Henry
 
 Book::Book(const std::string category, const std::string name, double price, int qty, const std::string ISBN, const std::string author)
-    : Product(category, name, price, qty), ISBN_(ISBN), author_(author){
-
+    : Product(category, name, price, qty){
+      ISBN_ = ISBN;
+      author_ = author;
 }
-
+Book::~Book() {}
 set<string> Book::keywords() const{
     set<string> aWord = parseStringToWords(author_);
     set<string> name = parseStringToWords(name_);
@@ -40,7 +42,7 @@ set<string> Book::keywords() const{
 string Book::displayString() const{
     stringstream ss;
     ss << name_ << endl;
-    ss << "Author: " << author_ << "ISBN: " << ISBN_ << endl;
+    ss << "Author: " << author_ << " ISBN: " << ISBN_ << endl;
     ss <<  price_ << " " << qty_ << " left." << endl;
 
     return ss.str();

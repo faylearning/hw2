@@ -2,6 +2,7 @@
 #define MOVIE_H
 #include <iostream>
 #include <string>
+#include <set>
 #include "product.h"
 
 //string name

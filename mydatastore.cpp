@@ -41,7 +41,8 @@ void MyDataStore::addProduct(Product *p)
 
     for (set<string>::iterator pIt = words.begin(); pIt != words.end(); ++pIt)
     {
-        keywordsMap_[*pIt].insert(p);
+		string word = convToLower(*pIt);
+        keywordsMap_[word].insert(p);
     }
 }
 
@@ -73,28 +74,27 @@ vector<Product *> MyDataStore::search(std::vector<std::string> &terms, int type)
 
     if (terms.size() == 0){
         return vector<Product *>(0);
-    }else if (terms.size() == 1){ //if there's only one term
-        map<string,set<Product*>>::iterator p = keywordsMap_.find(terms[0]);
-        if(p == keywordsMap_.end()){
-            return products;
-        }
-        set<Product*> p_val = p->second;
+    }else{
+        set<Product*> curr = keywordsMap_[convToLower(terms[0])];
+		// cout << curr.size() << endl;
+		for (tIt = terms.begin()+1; tIt != terms.end(); ++tIt){
+			if (type == 0){ //AND
+				// cout << keywordsMap_[convToLower(*tIt)].size() << endl;
+				// for(auto it = keywordsMap_.begin(); it != keywordsMap_.end(); ++it) {
+				// 	cout << it->first << "\t" << it->second.size() << "\n";
+				// }
+				curr = setIntersection(curr, keywordsMap_[convToLower(*tIt)]);
+				// cout << curr.size() << endl;
+			}
+			else if (type == 1){ //OR
+				// curr.insert(keywordsMap_[*tIt]);
+				curr = setUnion(curr, keywordsMap_[convToLower(*tIt)]);
+			}
+		}
+		return vector<Product*>(curr.begin(), curr.end());
+	}
 
-        products = vector<Product*>(p_val.begin(), p_val.end()); // find the matching product and return it
-    }
-
-    set<Product*> curr = keywordsMap_[terms[0]];
-    for (tIt = terms.begin()+1; tIt != terms.end(); ++tIt){
-        if (type == 0){ //AND
-            curr = setIntersection(curr, keywordsMap_[*tIt]);
-        }
-        else if (type == 1){ //OR
-            // curr.insert(keywordsMap_[*tIt]);
-            curr = setUnion(curr, keywordsMap_[*tIt]);
-        }
-    }
-
-    return vector<Product*>(curr.begin(), curr.end());
+    
 }
 
 
@@ -123,10 +123,12 @@ void MyDataStore::dump(std::ostream& ofile){
 }
 
 void MyDataStore:: add(std:: string username, Product* hit_result_index){
+
     if (userMap_.find(username) != userMap_.end()) {
         carts_[username].push_back(hit_result_index);
-    }else{
-        cout << "No user with this username" << endl;
+    }
+	else {
+        cout << "Invalid request" << endl;
         return;
     }
     
@@ -135,37 +137,60 @@ void MyDataStore:: add(std:: string username, Product* hit_result_index){
 void MyDataStore:: viewcart(std::string username){
     //map<std::string, std::deque<Product*>> carts_
     //Users should be able to view their entire cart while maintaining its order
-    
-    deque <Product*>& cart = carts_[username];
-    deque<Product*>::iterator cIt;
 
-    int num = 1;
-    for(cIt = cart.begin(); cIt != cart.end(); ++cIt){
-        cout << "Item " << num << endl;
-        cout << (*cIt)->displayString() << endl;
-        num++;
-    }
+	if(userMap_.find(username) == userMap_.end()){
+		cout << "Invalid username" << endl;
+	}else{
+		deque <Product*>& cart = carts_[username];
+		deque<Product*>::iterator cIt;
 
+		int num = 1;
+		for(cIt = cart.begin(); cIt != cart.end(); ++cIt){
+			cout << "Item " << num << endl;
+			cout << (*cIt)->displayString() << endl;
+			num++;
+		}
+	}
 }
+
 void MyDataStore:: buycart (std::string username){
-    deque<Product*>& cart = carts_[username];
-    User* user = userMap_[username];
+	if(userMap_.find(username) == userMap_.end()){
+		cout << "Invalid username" << endl;
+	}else if (carts_.find(username) == carts_.end()){
+		cout << "Invalid request" << endl;
+	}else{
 
-    deque<Product*>::iterator cIt;
+		// vector<Product*>& cart = carts_[username];
+		deque<Product*>& cart = carts_[username];
+		User* user = userMap_[username];
 
-    while(cIt != cart.end()){
-        int price = (*cIt)->getPrice();
-        int quant = (*cIt)->getQty();
-        int bal = user->getBalance();
-        if ((price <= bal) && (quant > 0)){
-            (*cIt)->subtractQty(1);
-            user->deductAmount(price);
-            cIt = cart.erase(cIt);
-        }else{
-            cIt++;
-        }
-    }
-    
+		deque<Product*>::iterator cIt;
+		cIt = cart.begin();
+
+		int bal = user->getBalance();
+		if (bal < 0){
+			cout << "Invalid request" << endl;
+		}
+
+		while(cIt != cart.end()){
+			int price = (*cIt)->getPrice();
+			int quant = (*cIt)->getQty();
+			// cout << "balance: " << bal << endl;
+
+			if ((price <= bal) && (quant > 0)){
+				(*cIt)->subtractQty(1);
+
+				// cout << "quantity: " << quant << endl;
+				user->deductAmount(price);
+				bal = user->getBalance();
+
+				// cout << "balance after deduct: " << bal << endl;
+				cIt = cart.erase(cIt);
+			}else{
+				++cIt;
+			}
+		}
+	} 
 }
 
 

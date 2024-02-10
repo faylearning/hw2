@@ -14,44 +14,38 @@ std::string convToLower(std::string src)
 /** Complete the code to convert a string containing a rawWord
     to a set of words based on the criteria given in the assignment **/
 std::set<std::string> parseStringToWords(string rawWords){
-    //Men's I'll The ISBN 978-000000000-1 Of J. Mice And Men AB2F
+    //Men's Shirt I'll The ISBN 978-000000000-1 Of J. Mice And AB2F
     int len = rawWords.length(); 
-    
     std::set<std::string> list;
-
     std::string temp = "";
 
     //looping through rawWords
     for (int i = 0; i < len; i++){
+        
         char currChar = rawWords[i];
-
+        // temp.clear();
         if(std::ispunct(currChar) && (currChar != '-')){
-            //while (rawWords[i+1] != ' '){
-                temp.clear();
-                //i++;
-            //}
-        }
-
-
-        if (std::isalpha(currChar) || isdigit(currChar) || (currChar == '-')){
+            if (temp.length() >= 2){
+                list.insert(temp);
+            }
+            temp.clear();
+        }else if (std::isalpha(currChar) || isdigit(currChar) || (currChar == '-')){
             temp += currChar;
-        }else if (temp.length() >= 2){
-            list.insert(temp);
+            // cout << "temp:  " << temp << endl;
+        }else if (currChar == ' '){
+            if(temp.length() >= 2){
+                list.insert(temp);
+                // cout << "adding " << temp << endl;
+            }
             temp.clear();
         }
-
-        // if (ispunct(currChar) && temp.length() >= 2) {
-        //     list.insert(temp);
-        //     temp.clear();
-        // }
-    
+        
     }
-
     //reached end of rawWords, if longer than 1, add to set
     if (temp.length() > 1){
         list.insert(temp);
+        temp.clear();
     }
-    
     return list;
 }
 

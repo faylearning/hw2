@@ -122,12 +122,14 @@ int main(int argc, char* argv[])
                 }
             }else if (cmd == "VIEWCART"){
                 string username;
-                ss >> username;
-                ds.viewcart(convToLower(username));
+                if(ss >> username){
+                    ds.viewcart(convToLower(username));
+                }
             }else if (cmd == "BUYCART"){
                 string username;
-                ss >> username;
-                ds.buycart(convToLower(username));
+                if(ss >> username){
+                    ds.buycart(convToLower(username));
+                }
             }
             else {
                 cout << "Unknown command" << endl;

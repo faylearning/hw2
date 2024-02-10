@@ -15,12 +15,16 @@ using namespace std;
 MyDataStore::~MyDataStore()
 {
     // products & users
+	vector<Product*>::iterator pIt;
 
-    for (std::vector<Product*>::iterator it = products_.begin(); it != products_.end(); ++it) {
-    delete *it;
+	vector<User*>::iterator uIt;
+	uIt = users_.begin();
+
+    for (pIt = products_.begin(); pIt != products_.end(); ++pIt) {
+    delete *pIt;
   }
-  for (std::vector<User*>::iterator it = users_.begin(); it != users_.end(); ++it) {
-    delete *it;
+  for (uIt = users_.begin(); uIt != users_.end(); ++uIt) {
+    delete *uIt;
   }
 
     // while(!products_.empty()){
